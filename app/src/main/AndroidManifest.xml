@@ -50,6 +50,9 @@
         <activity
             android:name=".ShowAllDataActivity">
         </activity>
+        <activity
+            android:name=".ShowHomeDataActivity">
+        </activity>
 
     </application>
 

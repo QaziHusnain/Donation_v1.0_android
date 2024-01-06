@@ -3,10 +3,13 @@ package com.example.donation;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +41,24 @@ public class home_activity extends AppCompatActivity {
         Button saveButton = findViewById(R.id.buttonSaveHome);
         Button extractButton = findViewById(R.id.buttonExtractExcel);
 
+        // Add a TextWatcher to the nameEditText to listen for changes
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // Auto-fill other fields based on the entered name
+                String enteredName = editable.toString();
+                autofillHomeData(enteredName, mobileEditText, addressEditText, masjidAmountEditText, madrassaAmountEditText);
+            }
+        });
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +83,14 @@ public class home_activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 extractDataToCsv(getAllHomeData());
+            }
+        });
+
+        Button showAllDataButton = findViewById(R.id.buttonShowAllData);
+        showAllDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openShowAllDataActivity();
             }
         });
     }
@@ -202,6 +231,51 @@ public class home_activity extends AppCompatActivity {
             db.close();
         }
     }
+
+    private void autofillHomeData(String enteredName, EditText mobileEditText, EditText addressEditText,
+                                  EditText masjidAmountEditText, EditText madrassaAmountEditText) {
+
+        // Check if the entered name is empty, and clear other fields if it is
+        if (enteredName.isEmpty()) {
+            mobileEditText.setText("");
+            addressEditText.setText("");
+            masjidAmountEditText.setText("");
+            madrassaAmountEditText.setText("");
+            return;
+        }
+        // Retrieve data based on the entered name
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(
+                DatabaseHelper.TABLE_HOME,
+                null,
+                DatabaseHelper.COLUMN_NAME_HOME + "=?",
+                new String[]{enteredName},
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            // Extract data and fill the fields
+            @SuppressLint("Range") String mobile = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MOBILE_HOME));
+            @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ADDRESS_HOME));
+
+
+            mobileEditText.setText(mobile);
+            addressEditText.setText(address);
+
+
+            cursor.close();
+        }
+
+        db.close();
+    }
+    private void openShowAllDataActivity() {
+        Intent intent = new Intent(this, ShowHomeDataActivity.class);
+        startActivity(intent);
+    }
+
+
 
 
 }

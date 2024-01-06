@@ -92,7 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonClearData"
         android:layout_centerHorizontal="true"
-        android:text="Show All Data"
+        android:text="Show Personal Data"
         android:layout_marginTop="16dp"/>
 
 
