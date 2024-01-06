@@ -1,16 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <TextView
+    <EditText
+        android:id="@+id/editTextShopName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Shop Name"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextShopkeeperName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Shopkeeper Name"
+        android:layout_below="@id/editTextShopName"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextShopAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Shop Address"
+        android:layout_below="@id/editTextShopkeeperName"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextMasjidAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Masjid Amount"
+        android:layout_below="@id/editTextShopAddress"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextMadrassaAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Madrassa Amount"
+        android:layout_below="@id/editTextMasjidAmount"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <Button
+        android:id="@+id/buttonSaveShop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Shop Activity"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <!-- Add other views for the Shop Activity layout as needed -->
-
+        android:text="Save"
+        android:layout_below="@id/editTextMadrassaAmount"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
 </RelativeLayout>

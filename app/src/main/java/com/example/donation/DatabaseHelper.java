@@ -34,6 +34,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MASJID_AMOUNT = "masjid_amount";
     public static final String COLUMN_MADRASSA_AMOUNT = "madrassa_amount";
 
+    public static final String TABLE_SHOP = "shop_info";
+    public static final String COLUMN_ID_SHOP = "id";
+    public static final String COLUMN_NAME_SHOP = "shop_name";
+    public static final String COLUMN_SHOPKEEPER_NAME = "shopkeeper_name";
+    public static final String COLUMN_ADDRESS_SHOP = "shop_address";
+    public static final String COLUMN_MASJID_AMOUNT_SHOP = "masjid_amount";
+    public static final String COLUMN_MADRASSA_AMOUNT_SHOP = "madrassa_amount";
+
     // Create table query
     private static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
@@ -61,6 +69,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_MASJID_AMOUNT + " TEXT NOT NULL, " +
                     COLUMN_MADRASSA_AMOUNT + " TEXT NOT NULL);";
 
+
+    // Create table SQL statement for Shop
+    private static final String CREATE_TABLE_SHOP = "CREATE TABLE " + TABLE_SHOP + "("
+            + COLUMN_ID_SHOP + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_NAME_SHOP + " TEXT,"
+            + COLUMN_SHOPKEEPER_NAME + " TEXT,"
+            + COLUMN_ADDRESS_SHOP + " TEXT,"
+            + COLUMN_MASJID_AMOUNT_SHOP + " TEXT,"
+            + COLUMN_MADRASSA_AMOUNT_SHOP + " TEXT"
+            + ")";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -70,10 +89,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE);
         db.execSQL(CREATE_TABLE_PERSONAL);
         db.execSQL(CREATE_TABLE_HOME);
+        db.execSQL(CREATE_TABLE_SHOP);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Implement if needed
+        // Drop older tables if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PERSONAL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_HOME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOP);
+
+        // Create tables again
+        onCreate(db);
     }
 }
