@@ -53,6 +53,9 @@
         <activity
             android:name=".ShowHomeDataActivity">
         </activity>
+        <activity
+            android:name=".ShowShopDataActivity">
+        </activity>
 
     </application>
 

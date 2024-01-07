@@ -7,58 +7,101 @@
         android:id="@+id/editTextShopName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Shop Name"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Shop Name"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/editTextShopkeeperName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Shopkeeper Name"
         android:layout_below="@id/editTextShopName"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Shopkeeper Name"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/editTextMobileShop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextShopkeeperName"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Mobile"
+        android:inputType="phone"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/editTextShopAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Shop Address"
-        android:layout_below="@id/editTextShopkeeperName"
-        android:layout_marginTop="16dp"
+        android:layout_below="@+id/editTextMobileShop"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Shop Address"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/editTextMasjidAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Masjid Amount"
         android:layout_below="@id/editTextShopAddress"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Masjid Amount"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/editTextMadrassaAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Madrassa Amount"
         android:layout_below="@id/editTextMasjidAmount"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Madrassa Amount"
+        android:minHeight="48dp" />
 
     <Button
         android:id="@+id/buttonSaveShop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/editTextMadrassaAmount"
         android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:text="Save" />
+
+    <Button
+        android:id="@+id/buttonExtractExcel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonSaveShop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Extract in Excel" />
+    <Button
+        android:id="@+id/buttonClearDataShop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonExtractExcel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Clear ALL Data"
+        android:onClick="onClearDataButtonClickHome" />
+    <Button
+        android:id="@+id/buttonShowAllData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonClearDataShop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Show Shop Data"
+        />
 </RelativeLayout>

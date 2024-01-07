@@ -38,6 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID_SHOP = "id";
     public static final String COLUMN_NAME_SHOP = "shop_name";
     public static final String COLUMN_SHOPKEEPER_NAME = "shopkeeper_name";
+    public static final String COLUMN_MOBILE_SHOP = "mobile";
     public static final String COLUMN_ADDRESS_SHOP = "shop_address";
     public static final String COLUMN_MASJID_AMOUNT_SHOP = "masjid_amount";
     public static final String COLUMN_MADRASSA_AMOUNT_SHOP = "madrassa_amount";
@@ -71,14 +72,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     // Create table SQL statement for Shop
-    private static final String CREATE_TABLE_SHOP = "CREATE TABLE " + TABLE_SHOP + "("
-            + COLUMN_ID_SHOP + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_NAME_SHOP + " TEXT,"
-            + COLUMN_SHOPKEEPER_NAME + " TEXT,"
-            + COLUMN_ADDRESS_SHOP + " TEXT,"
-            + COLUMN_MASJID_AMOUNT_SHOP + " TEXT,"
-            + COLUMN_MADRASSA_AMOUNT_SHOP + " TEXT"
-            + ")";
+    private static final String CREATE_TABLE_SHOP =
+            "CREATE TABLE " + TABLE_SHOP + " (" +
+                    COLUMN_ID_SHOP + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_NAME_SHOP + " TEXT NOT NULL, " +
+                    COLUMN_SHOPKEEPER_NAME + " TEXT NOT NULL, " +
+                    COLUMN_MOBILE_SHOP + " TEXT NOT NULL, " +
+                    COLUMN_ADDRESS_SHOP + " TEXT NOT NULL, " +
+                    COLUMN_MASJID_AMOUNT_SHOP + " TEXT NOT NULL, " +
+                    COLUMN_MADRASSA_AMOUNT_SHOP + " TEXT NOT NULL);";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
