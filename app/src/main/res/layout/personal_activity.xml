@@ -8,7 +8,8 @@
         android:id="@+id/textViewPersonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Personal Activity"
+        android:layout_centerHorizontal="true"
+        android:text="Personal Box"
         android:textSize="24sp"
         android:textStyle="bold" />
 

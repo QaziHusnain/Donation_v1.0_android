@@ -3,6 +3,7 @@ package com.example.donation;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -18,6 +19,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -27,6 +30,8 @@ import java.util.ArrayList;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import android.Manifest;
+
 
 
 
@@ -34,6 +39,8 @@ import java.io.IOException;
 public class personal_activity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 123; // You can use any integer value here
+
     private EditText nameEditText, mobileEditText, addressEditText;
 
     @Override
@@ -144,11 +151,28 @@ public class personal_activity extends AppCompatActivity {
         }
     }
 
-    private void sendThankYouSMS(String phoneNumber, String name, String amount, String type) {
+    private void sendThankYouSMS(final String phoneNumber, final String name, final String amount, final String type) {
+        try {
+            // Check if SMS permission is granted
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Request the SMS permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS}, MY_PERMISSIONS_REQUEST_SEND_SMS);
+            } else {
+                // Permission already granted, proceed with sending SMS
+                sendThankYouSMSAfterPermission(phoneNumber, name, amount, type);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error checking SMS permission: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void sendThankYouSMSAfterPermission(final String phoneNumber, final String name, final String amount, final String type) {
         try {
             android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
 
-            String message = "Salam "+name+" shb! Islamic Centre Pindigheb k liay aap ki tarf sa Rs. " + amount +"("+type+")  wasool hua hai";
+            String message = "Salam " + name + " shb! Islamic Centre Pindigheb k liay aap ki tarf sa Rs. " + amount + "(" + type + ")  wasool hua hai";
 
             smsManager.sendTextMessage(phoneNumber, null, message, null, null);
             Toast.makeText(this, "Main content SMS sent successfully", Toast.LENGTH_SHORT).show();
@@ -159,7 +183,7 @@ public class personal_activity extends AppCompatActivity {
                 public void run() {
                     try {
                         // Send the additional text after the delay
-                        String additionalText = "Allah Taalah Aap k rizq,maal,jan,olad,izzat ma barrkatain ata farmaey aur Ap k jitnay marhoomeen bahalat  e Emaan wafat pa gaey hain un ki maghfirat farmaey.";
+                        String additionalText = "Allah Taalah Aap k rizq, maal, jan, olad, izzat ma barrkatain ata farmaey aur Ap k jitnay marhoomeen bahalat e Emaan wafat pa gaey hain un ki maghfirat farmaey.";
                         smsManager.sendTextMessage(phoneNumber, null, additionalText, null, null);
                         Toast.makeText(getApplicationContext(), "Additional text SMS sent successfully", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {

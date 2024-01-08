@@ -9,10 +9,21 @@
     android:paddingBottom="16dp"
     tools:context=".MainActivity">
 
+    <!-- Icon TextView -->
+    <TextView
+        android:id="@+id/textViewIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:drawableTop="@drawable/my_icon"
+
+        android:textSize="18sp" />
+
     <EditText
         android:id="@+id/editTextUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewIcon"
         android:hint="Username"
         android:minHeight="48dp" />
 
