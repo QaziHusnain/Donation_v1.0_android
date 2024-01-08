@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import android.os.Handler;
 
 public class shop_activity extends AppCompatActivity {
 
@@ -41,6 +44,27 @@ public class shop_activity extends AppCompatActivity {
 
         Button saveButton = findViewById(R.id.buttonSaveShop);
         Button extractButton = findViewById(R.id.buttonExtractExcel);
+
+        shopNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // Auto-fill other fields based on the entered name
+                String enteredName = editable.toString();
+                autofillShopData(enteredName,shopkeeperNameEditText, mobileEditText, shopAddressEditText, masjidAmountEditText, madrassaAmountEditText);
+            }
+        });
+
+
+
+
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,12 +118,12 @@ public class shop_activity extends AppCompatActivity {
 
 
     private void saveShopInfo() {
-        String shopName = shopNameEditText.getText().toString();
-        String shopkeeperName = shopkeeperNameEditText.getText().toString();
-        String mobile = mobileEditText.getText().toString();
-        String shopAddress = shopAddressEditText.getText().toString();
-        String masjidAmount = masjidAmountEditText.getText().toString();
-        String madrassaAmount = madrassaAmountEditText.getText().toString();
+        String shopName = shopNameEditText.getText().toString().replace(",", ""); // Remove commas;
+        String shopkeeperName = shopkeeperNameEditText.getText().toString().replace(",", ""); // Remove commas;
+        String mobile = mobileEditText.getText().toString().replace(",", ""); // Remove commas;
+        String shopAddress = shopAddressEditText.getText().toString().replace(",", ""); // Remove commas;
+        String masjidAmount = masjidAmountEditText.getText().toString().replace(",", ""); // Remove commas;
+        String madrassaAmount = madrassaAmountEditText.getText().toString().replace(",", ""); // Remove commas;
 
         // Validate if any of the fields are empty
         if (shopName.isEmpty() || shopkeeperName.isEmpty()|| mobile.isEmpty() || shopAddress.isEmpty() || masjidAmount.isEmpty() || madrassaAmount.isEmpty()) {
@@ -130,7 +154,7 @@ public class shop_activity extends AppCompatActivity {
                 Toast.makeText(this, "Failed to save shop information", Toast.LENGTH_SHORT).show();
             } finally {
                 db.close();
-                sendThankYouSMS(mobile);
+                sendThankYouSMS(mobile, shopName, madrassaAmount, masjidAmount);
             }
         }
     }
@@ -144,11 +168,41 @@ public class shop_activity extends AppCompatActivity {
         madrassaAmountEditText.setText("");
     }
 
-    private void sendThankYouSMS(String phoneNumber) {
-        android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-        String message = "Thank you for your donation!";
-        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+    private void sendThankYouSMS(String phoneNumber, String shopName, String mudrassaAmount, String masjidAmount) {
+        try {
+            android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+
+            String message = "Salam! AKF Islamic Centre Pindigheb k liay aap ki shop " + shopName +
+                    " k atiat box se Masjid fund k liya Rs. " + masjidAmount +
+                    " aur Mudrassa fund k liya Rs. " + mudrassaAmount + " wasool hua hai";
+
+            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+            Toast.makeText(this, "Main content SMS sent successfully", Toast.LENGTH_SHORT).show();
+
+            // Introduce a delay of, for example, 5 seconds (5000 milliseconds)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        // Send the additional text after the delay
+                        String additionalText = "Allah Taalah Aap k rizq,maal,jan,olad,izzat ma barrkatain ata farmaey aur Ap k jitnay marhoomeen bahalat  e Emaan wafat pa gaey hain un ki maghfirat farmaey.";
+                        smsManager.sendTextMessage(phoneNumber, null, additionalText, null, null);
+                        Toast.makeText(getApplicationContext(), "Additional text SMS sent successfully", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Error sending additional text SMS: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, 5000); // 5000 milliseconds (5 seconds)
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error sending main content SMS: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
+
+
+
 
     private List<String> getAllShopData() {
         // Retrieve all home data from the database
@@ -223,5 +277,57 @@ public class shop_activity extends AppCompatActivity {
     private void openShowAllDataActivity() {
         Intent intent = new Intent(this, ShowShopDataActivity.class);
         startActivity(intent);
+    }
+
+    // Modify the autofillShopData method to handle spaces between words and trim leading/trailing spaces
+    private void autofillShopData(String enteredName, EditText shopkeeperName, EditText mobileEditText,
+                                  EditText addressEditText, EditText masjidAmountEditText, EditText madrassaAmountEditText) {
+        // Check if the entered name is empty, and clear other fields if it is
+        if (enteredName.isEmpty()) {
+            clearAutofillFields(shopkeeperName, mobileEditText, addressEditText, masjidAmountEditText, madrassaAmountEditText);
+            return;
+        }
+
+        // Normalize the entered name by converting to lowercase and trimming leading/trailing spaces
+        String normalizedEnteredName = enteredName.toLowerCase().trim();
+
+        // Retrieve data based on the normalized entered name
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(
+                DatabaseHelper.TABLE_SHOP,
+                null,
+                "LOWER(TRIM(" + DatabaseHelper.COLUMN_NAME_SHOP + "))=?",
+                new String[]{normalizedEnteredName},
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            // Extract data and fill the fields
+            @SuppressLint("Range") String shopkeeper_name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SHOPKEEPER_NAME));
+            @SuppressLint("Range") String mobile = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MOBILE_SHOP));
+            @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ADDRESS_SHOP));
+
+            // Handle null values before setting the text
+            shopkeeperName.setText(shopkeeper_name != null ? shopkeeper_name : "");
+            mobileEditText.setText(mobile != null ? mobile : "");
+            addressEditText.setText(address != null ? address : "");
+
+            cursor.close();
+        }
+
+        db.close();
+    }
+
+
+    // Add a method to clear autofill fields
+    private void clearAutofillFields(EditText shopkeeperName, EditText mobileEditText, EditText addressEditText,
+                                     EditText masjidAmountEditText, EditText madrassaAmountEditText) {
+        shopkeeperName.setText("");
+        mobileEditText.setText("");
+        addressEditText.setText("");
+        masjidAmountEditText.setText("");
+        madrassaAmountEditText.setText("");
     }
 }

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -139,14 +140,39 @@ public class personal_activity extends AppCompatActivity {
             db.close();
 
             // Send Thank You SMS
-            sendThankYouSMS(mobile);
+            sendThankYouSMS(mobile,name,amount,type);
         }
     }
 
-    private void sendThankYouSMS(String phoneNumber) {
-        android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-        String message = "Thank you for your donation!";
-        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+    private void sendThankYouSMS(String phoneNumber, String name, String amount, String type) {
+        try {
+            android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+
+            String message = "Salam "+name+" shb! Islamic Centre Pindigheb k liay aap ki tarf sa Rs. " + amount +"("+type+")  wasool hua hai";
+
+            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+            Toast.makeText(this, "Main content SMS sent successfully", Toast.LENGTH_SHORT).show();
+
+            // Introduce a delay of, for example, 5 seconds (5000 milliseconds)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        // Send the additional text after the delay
+                        String additionalText = "Allah Taalah Aap k rizq,maal,jan,olad,izzat ma barrkatain ata farmaey aur Ap k jitnay marhoomeen bahalat  e Emaan wafat pa gaey hain un ki maghfirat farmaey.";
+                        smsManager.sendTextMessage(phoneNumber, null, additionalText, null, null);
+                        Toast.makeText(getApplicationContext(), "Additional text SMS sent successfully", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Error sending additional text SMS: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, 5000); // 5000 milliseconds (5 seconds)
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error sending main content SMS: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void extractDataToCsv(List<String> dataList) {

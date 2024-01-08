@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -63,11 +64,11 @@ public class home_activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Get the entered data
-                String name = nameEditText.getText().toString();
-                String mobile = mobileEditText.getText().toString();
-                String address = addressEditText.getText().toString();
-                String masjidAmount = masjidAmountEditText.getText().toString();
-                String madrassaAmount = madrassaAmountEditText.getText().toString();
+                String name = nameEditText.getText().toString().replace(",", "");
+                String mobile = mobileEditText.getText().toString().replace(",", "");
+                String address = addressEditText.getText().toString().replace(",", "");
+                String masjidAmount = masjidAmountEditText.getText().toString().replace(",", "");
+                String madrassaAmount = madrassaAmountEditText.getText().toString().replace(",", "");
 
                 // Validate if any of the fields are empty
                 if (name.isEmpty() || mobile.isEmpty() || address.isEmpty() || masjidAmount.isEmpty() || madrassaAmount.isEmpty()) {
@@ -128,15 +129,43 @@ public class home_activity extends AppCompatActivity {
         } finally {
             // Close the database connection
             db.close();
-            sendThankYouSMS(mobile);
+            sendThankYouSMS(mobile,name,madrassaAmount,masjidAmount);
         }
     }
 
-    private void sendThankYouSMS(String phoneNumber) {
-        android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-        String message = "Thank you for your donation!";
-        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+    private void sendThankYouSMS(String phoneNumber, String name, String mudrassaAmount, String masjidAmount) {
+        try {
+            android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+
+
+            String message = "Salam "+name+" shb! AKF Islamic Centre Pindigheb k liay aap ki ghar k atiat box se Masjid fund k liya Rs. " + masjidAmount +
+                    " aur Mudrassa fund k liya Rs. " + mudrassaAmount + " wasool hua hai";
+
+            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+            Toast.makeText(this, "Main content SMS sent successfully", Toast.LENGTH_SHORT).show();
+
+            // Introduce a delay of, for example, 5 seconds (5000 milliseconds)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        // Send the additional text after the delay
+                        String additionalText = "Allah Taalah Aap k rizq,maal,jan,olad,izzat ma barrkatain ata farmaey aur Ap k jitnay marhoomeen bahalat  e Emaan wafat pa gaey hain un ki maghfirat farmaey.";
+                        smsManager.sendTextMessage(phoneNumber, null, additionalText, null, null);
+                        Toast.makeText(getApplicationContext(), "Additional text SMS sent successfully", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Error sending additional text SMS: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, 5000); // 5000 milliseconds (5 seconds)
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error sending main content SMS: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     private void extractDataToCsv(List<String> dataList) {
         try {
