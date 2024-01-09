@@ -126,8 +126,9 @@ public class ShowAllDataActivity extends AppCompatActivity {
                 @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ADDRESS));
                 @SuppressLint("Range") String amount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_AMOUNT));
                 @SuppressLint("Range") String type = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TYPE));
+                @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_DATE));
 
-                String rowData = name + "," + mobile + "," + address + "," + amount + "," + type;
+                String rowData = name + "," + mobile + "," + address + "," + amount + "," + type + "," + date;
                 dataList.add(rowData);
 
             } while (cursor.moveToNext());
@@ -180,14 +181,16 @@ public class ShowAllDataActivity extends AppCompatActivity {
         String address = rowData[2];
         String amount = rowData[3];
         String type = rowData[4];
+        String date = rowData[5]; // Extracting the date from the rowData
 
         String whereClause = DatabaseHelper.COLUMN_NAME + "=? AND " +
                 DatabaseHelper.COLUMN_MOBILE + "=? AND " +
                 DatabaseHelper.COLUMN_ADDRESS + "=? AND " +
                 DatabaseHelper.COLUMN_AMOUNT + "=? AND " +
-                DatabaseHelper.COLUMN_TYPE + "=?";
+                DatabaseHelper.COLUMN_TYPE + "=? AND " +
+                DatabaseHelper.COLUMN_DATE + "=?"; // Including the date in the whereClause
 
-        String[] whereArgs = {name, mobile, address, amount, type};
+        String[] whereArgs = {name, mobile, address, amount, type, date};
 
         db.delete(DatabaseHelper.TABLE_PERSONAL, whereClause, whereArgs);
         db.close();
@@ -196,6 +199,7 @@ public class ShowAllDataActivity extends AppCompatActivity {
         dataList.remove(position);
         adapter.notifyDataSetChanged();
     }
+
 
     public void calculateTotalAmount() {
         // Calculate the total sum of the "amount" column
@@ -237,7 +241,7 @@ public class ShowAllDataActivity extends AppCompatActivity {
             try (OutputStream outputStream = getContentResolver().openOutputStream(fileUri)) {
                 if (outputStream != null) {
                     // Write header
-                    outputStream.write("Name,Mobile,Address,Amount,Type\n".getBytes());
+                    outputStream.write("Name,Mobile,Address,Amount,Type,Date\n".getBytes());
 
                     // Write data
                     for (String data : dataList) {

@@ -137,7 +137,8 @@ public class personal_activity extends AppCompatActivity {
             values.put(DatabaseHelper.COLUMN_ADDRESS, address);
             values.put(DatabaseHelper.COLUMN_AMOUNT, amount);
             values.put(DatabaseHelper.COLUMN_TYPE, type);
-
+            String currentDate = getCurrentDate();
+            values.put(DatabaseHelper.COLUMN_DATE, currentDate);
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(DatabaseHelper.TABLE_PERSONAL, null, values);
 
@@ -287,12 +288,13 @@ public class personal_activity extends AppCompatActivity {
         }
     }
     private String getCurrentDate() {
-        // Get current date and time
+        // Get current date
         Date currentDate = new Date();
 
-        // Format the date as a string
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // Format the date as a string without time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(currentDate);
     }
+
 
 }

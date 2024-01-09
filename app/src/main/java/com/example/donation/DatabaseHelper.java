@@ -24,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ADDRESS = "address";
     public static final String COLUMN_AMOUNT = "amount";
     public static final String COLUMN_TYPE = "type";
+    public static final String COLUMN_DATE = "date";
 
     // Table names and column names for home information
     public static final String TABLE_HOME = "home_info";
@@ -33,6 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ADDRESS_HOME = "address";
     public static final String COLUMN_MASJID_AMOUNT = "masjid_amount";
     public static final String COLUMN_MADRASSA_AMOUNT = "madrassa_amount";
+    public static final String COLUMN_DATE_HOME = "date";
 
     public static final String TABLE_SHOP = "shop_info";
     public static final String COLUMN_ID_SHOP = "id";
@@ -42,6 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ADDRESS_SHOP = "shop_address";
     public static final String COLUMN_MASJID_AMOUNT_SHOP = "masjid_amount";
     public static final String COLUMN_MADRASSA_AMOUNT_SHOP = "madrassa_amount";
+    public static final String COLUMN_DATE_SHOP = "date";
 
     // Create table query
     private static final String CREATE_TABLE =
@@ -58,7 +61,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_MOBILE + " TEXT NOT NULL, " +
                     COLUMN_ADDRESS + " TEXT NOT NULL, " +
                     COLUMN_AMOUNT + " TEXT NOT NULL, " +
-                    COLUMN_TYPE + " TEXT NOT NULL);";
+                    COLUMN_TYPE + " TEXT NOT NULL, " +
+                    COLUMN_DATE + " TEXT NOT NULL);";
 
     // Create table query for home information
     private static final String CREATE_TABLE_HOME =
@@ -68,7 +72,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_MOBILE_HOME + " TEXT NOT NULL, " +
                     COLUMN_ADDRESS_HOME + " TEXT NOT NULL, " +
                     COLUMN_MASJID_AMOUNT + " TEXT NOT NULL, " +
-                    COLUMN_MADRASSA_AMOUNT + " TEXT NOT NULL);";
+                    COLUMN_MADRASSA_AMOUNT + " TEXT NOT NULL, " +
+                    COLUMN_DATE_HOME + " TEXT NOT NULL);";
 
 
     // Create table SQL statement for Shop
@@ -80,7 +85,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_MOBILE_SHOP + " TEXT NOT NULL, " +
                     COLUMN_ADDRESS_SHOP + " TEXT NOT NULL, " +
                     COLUMN_MASJID_AMOUNT_SHOP + " TEXT NOT NULL, " +
-                    COLUMN_MADRASSA_AMOUNT_SHOP + " TEXT NOT NULL);";
+                    COLUMN_MADRASSA_AMOUNT_SHOP + " TEXT NOT NULL, " +
+                    COLUMN_DATE_SHOP + " TEXT NOT NULL);";
+
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

@@ -20,7 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import android.os.Handler;
 
@@ -117,6 +119,8 @@ public class shop_activity extends AppCompatActivity {
                 values.put(DatabaseHelper.COLUMN_ADDRESS_SHOP, shopAddress);
                 values.put(DatabaseHelper.COLUMN_MASJID_AMOUNT_SHOP, masjidAmount);
                 values.put(DatabaseHelper.COLUMN_MADRASSA_AMOUNT_SHOP, madrassaAmount);
+                String currentDate = getCurrentDate();
+                values.put(DatabaseHelper.COLUMN_DATE_SHOP, currentDate);
 
                 // Insert the new row, returning the primary key value of the new row
                 long newRowId = db.insert(DatabaseHelper.TABLE_SHOP, null, values);
@@ -150,9 +154,8 @@ public class shop_activity extends AppCompatActivity {
         try {
             android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
 
-            String message = "Salam! AKF Islamic Centre Pindigheb k liay Aap ki shop " + shopName +
-                    " k Atiyat Box se Masjid fund k liay Rs. " + masjidAmount +
-                    " aur Madrassa fund k liay Rs. " + mudrassaAmount + " wasool huay hain.";
+            String message = "Salam! AKF Islamic Centre Pindigheb k liay Aap ki shop k Atiyat Box se Masjid fund k liay Rs. " + masjidAmount +
+                    " aur Madrassa fund k liay Rs. " + mudrassaAmount + " wasool huay hain";
 
             smsManager.sendTextMessage(phoneNumber, null, message, null, null);
             Toast.makeText(this, "Main content SMS sent successfully", Toast.LENGTH_SHORT).show();
@@ -181,77 +184,6 @@ public class shop_activity extends AppCompatActivity {
 
 
 
-
-    private List<String> getAllShopData() {
-        // Retrieve all home data from the database
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        List<String> dataList = new ArrayList<>();
-
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_SHOP,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                // Extract data and add to the list
-                @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME_SHOP));
-                @SuppressLint("Range") String shopkeeper_name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SHOPKEEPER_NAME));
-                @SuppressLint("Range") String mobile = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MOBILE_SHOP));
-                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ADDRESS_SHOP));
-                @SuppressLint("Range") String masjidAmount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MASJID_AMOUNT_SHOP));
-                @SuppressLint("Range") String madrassaAmount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MADRASSA_AMOUNT_SHOP));
-
-                String rowData = name + "," + shopkeeper_name +"," + mobile + "," + address + "," + masjidAmount + "," + madrassaAmount;
-                dataList.add(rowData);
-
-            } while (cursor.moveToNext());
-
-            cursor.close();
-        }
-
-        db.close();
-
-        return dataList;
-    }
-    private void extractDataToCsv(List<String> dataList) {
-        try {
-            // Get the "Downloads" directory
-            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-            // Create a directory named "MyDonations" within the "Downloads" directory
-            File myDonationsDir = new File(downloadsDir, "MyDonations");
-            if (!myDonationsDir.exists()) {
-                myDonationsDir.mkdirs();
-            }
-
-            // Create the CSV file within the "MyDonations" directory
-            File file = new File(myDonationsDir, "Shop_data.csv");
-            FileWriter writer = new FileWriter(file);
-
-            // Write header
-            writer.write("Name,Shopkeeper Name,Mobile,Address,Masjid Amount,Mudrassa Amount\n");
-
-            // Write data
-            for (String data : dataList) {
-                writer.write(data + "\n");
-            }
-
-            writer.flush();
-            writer.close();
-
-            Toast.makeText(this, "Data exported to " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error exporting data", Toast.LENGTH_SHORT).show();
-        }
-    }
     private void openShowAllDataActivity() {
         Intent intent = new Intent(this, ShowShopDataActivity.class);
         startActivity(intent);
@@ -346,10 +278,10 @@ public class shop_activity extends AppCompatActivity {
 
         try {
             // Delete all rows from the "personalinfo" table
-            int rowsDeleted = db.delete(DatabaseHelper.TABLE_PERSONAL, null, null);
+            int rowsDeleted = db.delete(DatabaseHelper.TABLE_SHOP, null, null);
 
             if (rowsDeleted > 0) {
-                Toast.makeText(this, "All personal data cleared successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "All shop data cleared successfully", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "No data to clear", Toast.LENGTH_SHORT).show();
             }
@@ -359,6 +291,14 @@ public class shop_activity extends AppCompatActivity {
         } finally {
             db.close();
         }
+    }
+    private String getCurrentDate() {
+        // Get current date
+        Date currentDate = new Date();
+
+        // Format the date as a string without time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(currentDate);
     }
 
 }

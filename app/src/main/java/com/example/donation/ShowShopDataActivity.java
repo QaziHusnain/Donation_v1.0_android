@@ -90,7 +90,7 @@ public class ShowShopDataActivity extends AppCompatActivity {
     }
 
     private List<String> getAllShopData() {
-        // Retrieve all home data from the database
+        // Retrieve all shop data from the database
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<String> dataList = new ArrayList<>();
@@ -115,8 +115,9 @@ public class ShowShopDataActivity extends AppCompatActivity {
                 @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ADDRESS_SHOP));
                 @SuppressLint("Range") String masjidAmount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MASJID_AMOUNT_SHOP));
                 @SuppressLint("Range") String madrassaAmount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MADRASSA_AMOUNT_SHOP));
+                @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_DATE_SHOP)); // Retrieve the date
 
-                String rowData = name + "," + shopkeeper_name+ "," + mobile + "," + address + "," + masjidAmount + "," + madrassaAmount;
+                String rowData = name + "," + shopkeeper_name + "," + mobile + "," + address + "," + masjidAmount + "," + madrassaAmount + "," + date;
                 dataList.add(rowData);
 
             } while (cursor.moveToNext());
@@ -128,6 +129,7 @@ public class ShowShopDataActivity extends AppCompatActivity {
 
         return dataList;
     }
+
 
     private void displayData(List<String> dataList) {
         // Use a ListView to display the data
@@ -165,20 +167,22 @@ public class ShowShopDataActivity extends AppCompatActivity {
 
         String[] rowData = dataList.get(position).split(",");
         String name = rowData[0];
-        String shopkeeper_name=rowData[1];
+        String shopkeeper_name = rowData[1];
         String mobile = rowData[2];
         String address = rowData[3];
         String masjidAmount = rowData[4];
         String madrassaAmount = rowData[5];
+        String date = rowData[6]; // Assuming date is at index 6 in the rowData
 
         String whereClause = DatabaseHelper.COLUMN_NAME_SHOP + "=? AND " +
-                DatabaseHelper.COLUMN_SHOPKEEPER_NAME+ "=? AND " +
+                DatabaseHelper.COLUMN_SHOPKEEPER_NAME + "=? AND " +
                 DatabaseHelper.COLUMN_MOBILE_SHOP + "=? AND " +
                 DatabaseHelper.COLUMN_ADDRESS_SHOP + "=? AND " +
                 DatabaseHelper.COLUMN_MASJID_AMOUNT_SHOP + "=? AND " +
-                DatabaseHelper.COLUMN_MADRASSA_AMOUNT_SHOP + "=?";
+                DatabaseHelper.COLUMN_MADRASSA_AMOUNT_SHOP + "=? AND " +
+                DatabaseHelper.COLUMN_DATE_SHOP + "=?"; // Include the date in the whereClause
 
-        String[] whereArgs = {name,shopkeeper_name,mobile, address, masjidAmount, madrassaAmount};
+        String[] whereArgs = {name, shopkeeper_name, mobile, address, masjidAmount, madrassaAmount, date};
 
         db.delete(DatabaseHelper.TABLE_SHOP, whereClause, whereArgs);
         db.close();
@@ -187,6 +191,7 @@ public class ShowShopDataActivity extends AppCompatActivity {
         dataList.remove(position);
         adapter.notifyDataSetChanged();
     }
+
 
     private void calculateTotalAmount() {
         // Calculate the total sum of the "masjid_amount" and "madrassa_amount" columns
@@ -234,7 +239,7 @@ public class ShowShopDataActivity extends AppCompatActivity {
             try (OutputStream outputStream = getContentResolver().openOutputStream(fileUri)) {
                 if (outputStream != null) {
                     // Write header
-                    outputStream.write("Name,Shopkeeper Name,Mobile,Address,Masjid Amount,Mudrassa Amount\n".getBytes());
+                    outputStream.write("Name,Shopkeeper Name,Mobile,Address,Masjid Amount,Mudrassa Amount,Date\n".getBytes());
 
                     // Write data
                     for (String data : dataList) {

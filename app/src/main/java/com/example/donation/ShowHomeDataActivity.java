@@ -116,8 +116,9 @@ public class ShowHomeDataActivity extends AppCompatActivity {
                 @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ADDRESS_HOME));
                 @SuppressLint("Range") String masjidAmount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MASJID_AMOUNT));
                 @SuppressLint("Range") String madrassaAmount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MADRASSA_AMOUNT));
+                @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_DATE_HOME)); // Retrieve the date
 
-                String rowData = name + "," + mobile + "," + address + "," + masjidAmount + "," + madrassaAmount;
+                String rowData = name + "," + mobile + "," + address + "," + masjidAmount + "," + madrassaAmount + "," + date;
                 dataList.add(rowData);
 
             } while (cursor.moveToNext());
@@ -129,6 +130,7 @@ public class ShowHomeDataActivity extends AppCompatActivity {
 
         return dataList;
     }
+
 
     private void displayData(List<String> dataList) {
         // Use a ListView to display the data
@@ -170,14 +172,16 @@ public class ShowHomeDataActivity extends AppCompatActivity {
         String address = rowData[2];
         String masjidAmount = rowData[3];
         String madrassaAmount = rowData[4];
+        String date = rowData[5];
 
         String whereClause = DatabaseHelper.COLUMN_NAME_HOME + "=? AND " +
                 DatabaseHelper.COLUMN_MOBILE_HOME + "=? AND " +
                 DatabaseHelper.COLUMN_ADDRESS_HOME + "=? AND " +
                 DatabaseHelper.COLUMN_MASJID_AMOUNT + "=? AND " +
-                DatabaseHelper.COLUMN_MADRASSA_AMOUNT + "=?";
+                DatabaseHelper.COLUMN_MADRASSA_AMOUNT + "=? AND " +
+                DatabaseHelper.COLUMN_DATE_HOME + "=?"; // Include the date in the whereClause
 
-        String[] whereArgs = {name, mobile, address, masjidAmount, madrassaAmount};
+        String[] whereArgs = {name, mobile, address, masjidAmount, madrassaAmount, date};
 
         db.delete(DatabaseHelper.TABLE_HOME, whereClause, whereArgs);
         db.close();
@@ -234,7 +238,7 @@ public class ShowHomeDataActivity extends AppCompatActivity {
             try (OutputStream outputStream = getContentResolver().openOutputStream(fileUri)) {
                 if (outputStream != null) {
                     // Write header
-                    outputStream.write("Name,Mobile,Address,Masjid Amount,Mudrassa Amount\n".getBytes());
+                    outputStream.write("Name,Mobile,Address,Masjid Amount,Mudrassa Amount,Date\n".getBytes());
 
                     // Write data
                     for (String data : dataList) {

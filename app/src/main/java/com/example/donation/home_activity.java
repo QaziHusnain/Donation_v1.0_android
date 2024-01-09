@@ -21,7 +21,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class home_activity extends AppCompatActivity {
@@ -107,6 +109,8 @@ public class home_activity extends AppCompatActivity {
             values.put(DatabaseHelper.COLUMN_ADDRESS_HOME, address);
             values.put(DatabaseHelper.COLUMN_MASJID_AMOUNT, masjidAmount);
             values.put(DatabaseHelper.COLUMN_MADRASSA_AMOUNT, madrassaAmount);
+            String currentDate = getCurrentDate();
+            values.put(DatabaseHelper.COLUMN_DATE_HOME, currentDate);
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(DatabaseHelper.TABLE_HOME, null, values);
@@ -318,10 +322,10 @@ public class home_activity extends AppCompatActivity {
 
         try {
             // Delete all rows from the "personalinfo" table
-            int rowsDeleted = db.delete(DatabaseHelper.TABLE_PERSONAL, null, null);
+            int rowsDeleted = db.delete(DatabaseHelper.TABLE_HOME, null, null);
 
             if (rowsDeleted > 0) {
-                Toast.makeText(this, "All personal data cleared successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "All home data cleared successfully", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "No data to clear", Toast.LENGTH_SHORT).show();
             }
@@ -331,6 +335,14 @@ public class home_activity extends AppCompatActivity {
         } finally {
             db.close();
         }
+    }
+    private String getCurrentDate() {
+        // Get current date
+        Date currentDate = new Date();
+
+        // Format the date as a string without time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(currentDate);
     }
 
 
