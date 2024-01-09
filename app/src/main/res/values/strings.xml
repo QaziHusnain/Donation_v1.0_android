@@ -5,14 +5,11 @@
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
+    <string name="btn_total_collection">Total Collection</string>
     <string name="previous">Previous</string>
     <string-array name="type_array">
         <item>Zakat</item>
-        <item>Nafli Sadqa</item>
-        <item>Sadqa Wajib</item>
+        <item>Sadqat e Naflia</item>
+        <item>Sadqat e Wajiba</item>
     </string-array>
-
-
-
-
 </resources>

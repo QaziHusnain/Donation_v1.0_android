@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String enteredUsername = usernameEditText.getText().toString();
-                String enteredPassword = passwordEditText.getText().toString();
+                String enteredUsername = usernameEditText.getText().toString().trim();
+                String enteredPassword = passwordEditText.getText().toString().trim();
 
                 if (isValidCredentials(enteredUsername, enteredPassword)) {
                     Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);

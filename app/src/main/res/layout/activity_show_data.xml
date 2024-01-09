@@ -3,23 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ListView
         android:id="@+id/listViewAllData"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:padding="16dp"
         android:clickable="true"
-        android:layout_above="@+id/btnTotalCollection"/>
+        android:layout_above="@+id/btnTotalCollection" />
 
     <Button
         android:id="@+id/btnTotalCollection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total Collection"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="calculateTotalAmount"/>
+        android:layout_marginBottom="2dp"
+        android:onClick="calculateTotalAmount"
+        android:text="Total Collection" />
+
+    <Button
+        android:id="@+id/buttonExtractExcel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/btnTotalCollection"
+        android:layout_marginTop="-52dp"
+        android:text="Extract in Excel" />
 
 </RelativeLayout>

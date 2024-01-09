@@ -1,11 +1,17 @@
 package com.example.donation;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,15 +20,31 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ShowShopDataActivity extends AppCompatActivity {
     private List<String> dataList;
+    private static final int REQUEST_CODE_PICK_DIRECTORY = 2;
     private ArrayAdapter<String> adapter;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == REQUEST_CODE_PICK_DIRECTORY && resultCode == RESULT_OK) {
+            Uri treeUri = data.getData();
+
+            if (treeUri != null) {
+                // Perform the export with the selected directory URI
+                extractDataToCsv(getAllShopData(), treeUri);
+            }
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +56,7 @@ public class ShowShopDataActivity extends AppCompatActivity {
 
         // Set up the ListView item click listener
         ListView listView = findViewById(R.id.listViewAllData);
+        Button extractButton = findViewById(R.id.buttonExtractExcel);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -49,6 +72,21 @@ public class ShowShopDataActivity extends AppCompatActivity {
                 calculateTotalAmount();
             }
         });
+        extractButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open a system file picker to let the user choose a directory
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(intent, REQUEST_CODE_PICK_DIRECTORY);
+            }
+        });
+        // Check and request write external storage permission if needed
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }
     }
 
     private List<String> getAllShopData() {
@@ -179,6 +217,37 @@ public class ShowShopDataActivity extends AppCompatActivity {
                 "\nTotal Madrassa Amount: " + totalMadrassaAmount;
 
         Toast.makeText(this, totalAmountMessage, Toast.LENGTH_SHORT).show();
+    }
+    private void extractDataToCsv(List<String> dataList, Uri treeUri) {
+        try {
+            // Use the selected directory URI for file creation
+            Uri docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri,
+                    DocumentsContract.getTreeDocumentId(treeUri));
+
+            // Get the document's display name
+            String displayName = "Shop_data.csv";
+
+            // Create the CSV file within the selected directory
+            Uri fileUri = DocumentsContract.createDocument(getContentResolver(), docUri, "text/csv", displayName);
+
+            // Open an OutputStream to write data to the file
+            try (OutputStream outputStream = getContentResolver().openOutputStream(fileUri)) {
+                if (outputStream != null) {
+                    // Write header
+                    outputStream.write("Name,Shopkeeper Name,Mobile,Address,Masjid Amount,Mudrassa Amount\n".getBytes());
+
+                    // Write data
+                    for (String data : dataList) {
+                        outputStream.write((data + "\n").getBytes());
+                    }
+
+                    Toast.makeText(this, "Data exported to " + fileUri.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error exporting data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

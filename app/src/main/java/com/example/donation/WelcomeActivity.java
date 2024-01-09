@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,9 +23,9 @@ public class WelcomeActivity extends AppCompatActivity {
         welcomeTextView.setText("Welcome, " + username + "!");
 
         // Initialize buttons
-        Button buttonPersonal = findViewById(R.id.buttonPersonal);
-        Button buttonHome = findViewById(R.id.buttonHome);
-        Button buttonShop = findViewById(R.id.buttonShop);
+        ImageView buttonPersonal = findViewById(R.id.buttonPersonal);
+        ImageView buttonHome = findViewById(R.id.buttonHome);
+        ImageView buttonShop = findViewById(R.id.buttonShop);
 
         // Set click listeners for buttons
         buttonPersonal.setOnClickListener(new View.OnClickListener() {

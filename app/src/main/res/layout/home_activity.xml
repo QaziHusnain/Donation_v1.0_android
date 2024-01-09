@@ -70,19 +70,12 @@
         android:layout_marginTop="16dp"
         android:text="Save" />
 
-    <Button
-        android:id="@+id/buttonExtractExcel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/buttonSaveHome"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="Extract in Excel" />
+
     <Button
         android:id="@+id/buttonClearDataHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/buttonExtractExcel"
+        android:layout_below="@+id/buttonSaveHome"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="Clear ALL Data"
@@ -96,6 +89,16 @@
         android:layout_marginTop="16dp"
         android:text="Show Home Data"
          />
+    <TextView
+        android:id="@+id/textViewFooter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="A contribution by Qazi Developer"
+        android:textColor="@android:color/darker_gray"
+        android:textStyle="italic" />
 
 
 

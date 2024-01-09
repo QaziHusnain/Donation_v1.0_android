@@ -2,6 +2,7 @@
 package com.example.donation;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -40,7 +41,7 @@ public class home_activity extends AppCompatActivity {
         EditText masjidAmountEditText = findViewById(R.id.editTextMasjidAmount);
         EditText madrassaAmountEditText = findViewById(R.id.editTextMadrassaAmount);
         Button saveButton = findViewById(R.id.buttonSaveHome);
-        Button extractButton = findViewById(R.id.buttonExtractExcel);
+
 
         // Add a TextWatcher to the nameEditText to listen for changes
         nameEditText.addTextChangedListener(new TextWatcher() {
@@ -80,12 +81,7 @@ public class home_activity extends AppCompatActivity {
             }
         });
 
-        extractButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                extractDataToCsv(getAllHomeData());
-            }
-        });
+
 
         Button showAllDataButton = findViewById(R.id.buttonShowAllData);
         showAllDataButton.setOnClickListener(new View.OnClickListener() {
@@ -138,8 +134,8 @@ public class home_activity extends AppCompatActivity {
             android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
 
 
-            String message = "Salam "+name+" shb! AKF Islamic Centre Pindigheb k liay aap ki ghar k atiat box se Masjid fund k liya Rs. " + masjidAmount +
-                    " aur Mudrassa fund k liya Rs. " + mudrassaAmount + " wasool hua hai";
+            String message = "Salam! AKF Islamic Centre Pindigheb k liay Aap k Ghar k atiat box se Masjid fund k liay Rs. " + masjidAmount +
+                    " aur Madrassa fund k liay Rs. " + mudrassaAmount + " wasool huay hain.";
 
             smsManager.sendTextMessage(phoneNumber, null, message, null, null);
             Toast.makeText(this, "Main content SMS sent successfully", Toast.LENGTH_SHORT).show();
@@ -150,7 +146,7 @@ public class home_activity extends AppCompatActivity {
                 public void run() {
                     try {
                         // Send the additional text after the delay
-                        String additionalText = "Allah Taalah Aap k rizq,maal,jan,olad,izzat ma barrkatain ata farmaey aur Ap k jitnay marhoomeen bahalat  e Emaan wafat pa gaey hain un ki maghfirat farmaey.";
+                        String additionalText = "Allah Taalah Aap k ghar per khasoosi barkaton ka nazol farmaey aur Aap k jitnay aziz bahalat e Eman wafat pa chukay hain sub ki behisab maghfirat farmaey.";
                         smsManager.sendTextMessage(phoneNumber, null, additionalText, null, null);
                         Toast.makeText(getApplicationContext(), "Additional text SMS sent successfully", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
@@ -238,28 +234,10 @@ public class home_activity extends AppCompatActivity {
     }
 
     public void onClearDataButtonClickHome(View view) {
-        clearAllHomeData();
+        clearAllPersonalData();
     }
 
-    private void clearAllHomeData() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        try {
-            // Delete all rows from the "home_info" table
-            int rowsDeleted = db.delete(DatabaseHelper.TABLE_HOME, null, null);
-
-            if (rowsDeleted > 0) {
-                Toast.makeText(this, "All home data cleared successfully", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "No home data to clear", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to clear home data", Toast.LENGTH_SHORT).show();
-        } finally {
-            db.close();
-        }
-    }
 
     private void autofillHomeData(String enteredName, EditText mobileEditText, EditText addressEditText,
                                   EditText masjidAmountEditText, EditText madrassaAmountEditText) {
@@ -303,6 +281,58 @@ public class home_activity extends AppCompatActivity {
         Intent intent = new Intent(this, ShowHomeDataActivity.class);
         startActivity(intent);
     }
+    private void clearAllPersonalData() {
+        // Create a custom password dialog
+        Dialog passwordDialog = new Dialog(this);
+        passwordDialog.setContentView(R.layout.password_dialog);
+        passwordDialog.setCancelable(true);
+
+        EditText editTextPasswordDialog = passwordDialog.findViewById(R.id.editTextPasswordDialog);
+        Button buttonSubmitPassword = passwordDialog.findViewById(R.id.buttonSubmitPassword);
+
+        buttonSubmitPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Retrieve the entered password from the dialog
+                String enteredPassword = editTextPasswordDialog.getText().toString();
+
+                // Replace "YOUR_PASSWORD" with the actual password you want to use
+                String correctPassword = "7035";
+
+                if (enteredPassword.equals(correctPassword)) {
+                    // Password is correct, proceed to clear data
+                    clearData();
+                    passwordDialog.dismiss();  // Dismiss the password dialog
+                } else {
+                    // Password is incorrect, show a message
+                    Toast.makeText(getApplicationContext(), "Incorrect password. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Show the password dialog
+        passwordDialog.show();
+    }
+    private void clearData() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        try {
+            // Delete all rows from the "personalinfo" table
+            int rowsDeleted = db.delete(DatabaseHelper.TABLE_PERSONAL, null, null);
+
+            if (rowsDeleted > 0) {
+                Toast.makeText(this, "All personal data cleared successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No data to clear", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to clear personal data", Toast.LENGTH_SHORT).show();
+        } finally {
+            db.close();
+        }
+    }
+
 
 
 

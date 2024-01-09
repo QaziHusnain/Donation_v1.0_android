@@ -28,8 +28,8 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newUsername = newUsernameEditText.getText().toString();
-                String newPassword = newPasswordEditText.getText().toString();
+                String newUsername = newUsernameEditText.getText().toString().trim();
+                String newPassword = newPasswordEditText.getText().toString().trim();
 
                 // Validate input and insert into the database
                 if (!newUsername.isEmpty() && !newPassword.isEmpty()) {

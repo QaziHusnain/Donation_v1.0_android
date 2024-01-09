@@ -43,4 +43,14 @@
         android:layout_below="@+id/editTextNewPassword"
         android:layout_marginTop="16dp"
         android:text="Sign Up" />
+    <TextView
+        android:id="@+id/textViewFooter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="A contribution by Qazi Developer"
+        android:textColor="@android:color/darker_gray"
+        android:textStyle="italic" />
 </RelativeLayout>

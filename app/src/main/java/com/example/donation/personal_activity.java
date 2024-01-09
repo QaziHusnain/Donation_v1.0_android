@@ -1,6 +1,7 @@
 package com.example.donation;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.DocumentsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -25,13 +27,15 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.ArrayList;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import android.Manifest;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 
@@ -39,9 +43,11 @@ import android.Manifest;
 public class personal_activity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
+
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 123; // You can use any integer value here
 
     private EditText nameEditText, mobileEditText, addressEditText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +62,7 @@ public class personal_activity extends AppCompatActivity {
         final EditText amountEditText = findViewById(R.id.editTextAmount);
         final Spinner typeSpinner = findViewById(R.id.spinnerType);
         Button saveButton = findViewById(R.id.buttonSave);
-        Button extractButton = findViewById(R.id.buttonExtractExcel);
+
 
         // Add a TextWatcher to the nameEditText to listen for changes
         nameEditText.addTextChangedListener(new TextWatcher() {
@@ -75,6 +81,8 @@ public class personal_activity extends AppCompatActivity {
                 autofillData(enteredName, mobileEditText, addressEditText);
             }
         });
+
+
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,12 +103,7 @@ public class personal_activity extends AppCompatActivity {
         });
 
 
-        extractButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                extractDataToCsv(getAllPersonalData());
-            }
-        });
+
 
         Button clearDataButton = findViewById(R.id.buttonClearData);
         clearDataButton.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +120,9 @@ public class personal_activity extends AppCompatActivity {
                 openShowAllDataActivity();
             }
         });
+
+
+
 
 
     }
@@ -172,7 +178,7 @@ public class personal_activity extends AppCompatActivity {
         try {
             android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
 
-            String message = "Salam " + name + " shb! Islamic Centre Pindigheb k liay aap ki tarf sa Rs. " + amount + "(" + type + ")  wasool hua hai";
+            String message = "Salam " + name + " Sahib! AKF Islamic Centre Pindigheb k liay Aap ki taraf se Rs. " + amount + "(" + type + ")  atia wasool hua hai.";
 
             smsManager.sendTextMessage(phoneNumber, null, message, null, null);
             Toast.makeText(this, "Main content SMS sent successfully", Toast.LENGTH_SHORT).show();
@@ -183,7 +189,7 @@ public class personal_activity extends AppCompatActivity {
                 public void run() {
                     try {
                         // Send the additional text after the delay
-                        String additionalText = "Allah Taalah Aap k rizq, maal, jan, olad, izzat ma barrkatain ata farmaey aur Ap k jitnay marhoomeen bahalat e Emaan wafat pa gaey hain un ki maghfirat farmaey.";
+                        String additionalText = "Allah Taalah Aap k Rizq main Barkatain ata farmaey aur Aap k jitnay aziz bahalat e Eman wafat pa chukay hain sub ki behisab maghfirat farmaey.";
                         smsManager.sendTextMessage(phoneNumber, null, additionalText, null, null);
                         Toast.makeText(getApplicationContext(), "Additional text SMS sent successfully", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
@@ -199,98 +205,6 @@ public class personal_activity extends AppCompatActivity {
         }
     }
 
-    private void extractDataToCsv(List<String> dataList) {
-        try {
-            // Get the "Downloads" directory
-            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-            // Create a directory named "MyDonations" within the "Downloads" directory
-            File myDonationsDir = new File(downloadsDir, "MyDonations");
-            if (!myDonationsDir.exists()) {
-                myDonationsDir.mkdirs();
-            }
-
-            // Create the CSV file within the "MyDonations" directory
-            File file = new File(myDonationsDir, "personal_data.csv");
-            FileWriter writer = new FileWriter(file);
-
-            // Write header
-            writer.write("Name,Mobile,Address,Amount,Type\n");
-
-            // Write data
-            for (String data : dataList) {
-                writer.write(data + "\n");
-            }
-
-            writer.flush();
-            writer.close();
-
-            Toast.makeText(this, "Data exported to " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error exporting data", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private List<String> getAllPersonalData() {
-        // Retrieve all personal data from the database
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        List<String> dataList = new ArrayList<>();
-
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_PERSONAL,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                // Extract data and add to the list
-                @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME));
-                @SuppressLint("Range") String mobile = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MOBILE));
-                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ADDRESS));
-                @SuppressLint("Range") String amount = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_AMOUNT));
-                @SuppressLint("Range") String type = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TYPE));
-
-                String rowData = name + "," + mobile + "," + address + "," + amount + "," + type;
-                dataList.add(rowData);
-
-            } while (cursor.moveToNext());
-
-            cursor.close();
-        }
-
-        db.close();
-
-        return dataList;
-    }
-
-
-
-
-    private void clearAllPersonalData() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        try {
-            // Delete all rows from the "personalinfo" table
-            int rowsDeleted = db.delete(DatabaseHelper.TABLE_PERSONAL, null, null);
-
-            if (rowsDeleted > 0) {
-                Toast.makeText(this, "All personal data cleared successfully", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "No data to clear", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to clear personal data", Toast.LENGTH_SHORT).show();
-        } finally {
-            db.close();
-        }
-    }
     private void openShowAllDataActivity() {
         Intent intent = new Intent(this, ShowAllDataActivity.class);
         startActivity(intent);
@@ -321,13 +235,64 @@ public class personal_activity extends AppCompatActivity {
 
         db.close();
     }
+    private void clearAllPersonalData() {
+        // Create a custom password dialog
+        Dialog passwordDialog = new Dialog(this);
+        passwordDialog.setContentView(R.layout.password_dialog);
+        passwordDialog.setCancelable(true);
 
+        EditText editTextPasswordDialog = passwordDialog.findViewById(R.id.editTextPasswordDialog);
+        Button buttonSubmitPassword = passwordDialog.findViewById(R.id.buttonSubmitPassword);
 
+        buttonSubmitPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Retrieve the entered password from the dialog
+                String enteredPassword = editTextPasswordDialog.getText().toString();
 
+                // Replace "YOUR_PASSWORD" with the actual password you want to use
+                String correctPassword = "7035";
 
+                if (enteredPassword.equals(correctPassword)) {
+                    // Password is correct, proceed to clear data
+                    clearData();
+                    passwordDialog.dismiss();  // Dismiss the password dialog
+                } else {
+                    // Password is incorrect, show a message
+                    Toast.makeText(getApplicationContext(), "Incorrect password. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
+        // Show the password dialog
+        passwordDialog.show();
+    }
+    private void clearData() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        try {
+            // Delete all rows from the "personalinfo" table
+            int rowsDeleted = db.delete(DatabaseHelper.TABLE_PERSONAL, null, null);
 
+            if (rowsDeleted > 0) {
+                Toast.makeText(this, "All personal data cleared successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No data to clear", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to clear personal data", Toast.LENGTH_SHORT).show();
+        } finally {
+            db.close();
+        }
+    }
+    private String getCurrentDate() {
+        // Get current date and time
+        Date currentDate = new Date();
 
+        // Format the date as a string
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(currentDate);
+    }
 
 }

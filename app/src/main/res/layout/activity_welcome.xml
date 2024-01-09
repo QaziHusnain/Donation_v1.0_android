@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingTop="16dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="16dp"
     tools:context=".WelcomeActivity">
 
     <TextView
@@ -14,33 +10,55 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
         android:text="Welcome!"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp"/>
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
 
-        <Button
+        <ImageView
             android:id="@+id/buttonPersonal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Personal" />
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Personal Icon"
+            android:src="@drawable/personal" />
 
-        <Button
+        <ImageView
             android:id="@+id/buttonHome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Home" />
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Home Icon"
+            android:src="@drawable/home" />
 
-        <Button
+        <ImageView
             android:id="@+id/buttonShop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Shop" />
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Shop Icon"
+            android:src="@drawable/shop" />
+
     </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textViewFooter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="A contribution by Qazi Developer"
+        android:textColor="@android:color/darker_gray"
+        android:textStyle="italic" />
 </RelativeLayout>
